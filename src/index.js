@@ -4,7 +4,8 @@ import fetchCountries from "./fetchCountries"
 //import debounce from 'lodash/debounce';
 
 const DEBOUNCE_DELAY = 300;
-
+const countryList = document.querySelector(`.country-list`);
+//const countryInfo = document.querySelector(`.country-list`);
 
 searchBox = document.querySelector(`input#search-box`)
 console.log(searchBox);
@@ -14,6 +15,9 @@ searchBox.addEventListener(
         const inputValue = event.target.value.trim();
         
         if (inputValue) handleInput(inputValue);
+        else (
+            countryList.innerHTML = ` `
+        )
         
 });
     
@@ -27,34 +31,48 @@ function handleInput (value) {
                 else if (countries.length <= 10 && countries.length >= 2) {
                     displayCountriesInfo(countries)
                 } else {
-                    displayCountryInfo(countries[0])
+                    displayCountryInfo(countries)
                     }
                     }
-                )
+                ).then(error => {
+                    if (!Response.ok) {
+                      throw new error (Notiflix.Notify.failure(`Oops, there is no country with that name`));
+                    }
+                })
                     .catch(error => {
-                      Notiflix.Notify.error(`Oops, there is no country with that name.`);  
+                      console.log(error); 
                     }) 
         }, DEBOUNCE_DELAY);
 }
 
-function displayCountryInfo(country) {
-
- console.log(`country`,country);   
+function displayCountryInfo(countries) {
+        const markup = countries
+        .map(country => {
+          return `<li>
+      <img src="${country.flags.svg}" alt="Flag of ${
+            country.name.official
+          }" width="30" hight="20">
+            <b>${country.name.official}</b>
+            <p><b>Capital</b>: ${country.capital}</p>
+            <p><b>Population</b>: ${country.population}</p>
+            <p><b>Languages</b>: ${Object.values(country.languages)} </p>
+                </li>`;
+        })
+        .join('');
+      countryList.innerHTML = markup;   
 };
 
 function displayCountriesInfo(countries) {
-    console.log(`countries`, countries); 
-    const countryList = document.querySelector(`.country-list`);
-    countries.forEach(country => {
-        const li = document.createElement(`li`)  
-        const span = document.createElement(`span`)
-        span.innerHTML = country.name.official;
-        const img = document.createElement(`img`)
-        img.src = country.flags.svg
-        
-        li.append(span, img);
-        //console.log(li);
-        countryList.append(li);
-
-    });
+    //console.log(`countries`, countries); 
+  const markup = countries
+    .map(country => {
+      return `<li>
+      <img src="${country.flags.svg}" alt="Flag of ${
+        country.name.official
+      }" width="30" height="20">
+        <b>${country.name.official}</b>
+                </li>`;
+    })
+    .join('');
+  countryList.innerHTML = markup;
 };
