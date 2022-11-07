@@ -8,7 +8,7 @@ const countryList = document.querySelector(`.country-list`);
 //const countryInfo = document.querySelector(`.country-list`);
 
 searchBox = document.querySelector(`input#search-box`)
-console.log(searchBox);
+//console.log(searchBox);
 
 searchBox.addEventListener(
     "input", (event) => {
