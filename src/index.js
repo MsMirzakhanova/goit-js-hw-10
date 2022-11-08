@@ -34,7 +34,8 @@ function handleInput (value) {
                     }
                     })
   .catch(error => {
-    // Error handling
+    console.log(error);
+    Notiflix.Notify.failure(`Oops, there is no country with that name`)
   })      
 };
 
