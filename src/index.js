@@ -1,28 +1,27 @@
 import './css/styles.css';
 import Notiflix from 'notiflix';
 import fetchCountries from "./fetchCountries"
-//import debounce from 'lodash/debounce';
+import debounce from 'lodash.debounce';
 
 const DEBOUNCE_DELAY = 300;
 const countryList = document.querySelector(`.country-list`);
 //const countryInfo = document.querySelector(`.country-list`);
 
 const searchBox = document.querySelector(`input#search-box`)
-console.log(searchBox);
+//console.log(searchBox);
+    
+const onHandleInput = event => {
+  const inputValue = event.target.value.trim();
+        
+  if (inputValue) handleInput(inputValue);
+  else (
+    countryList.innerHTML = ` `
+  )      
+};
 
-searchBox.addEventListener(
-    "input", (event) => {
-        const inputValue = event.target.value.trim();
-        
-        if (inputValue) handleInput(inputValue);
-        else (
-            countryList.innerHTML = ` `
-        )
-        
-});
+searchBox.addEventListener(`input`, debounce(onHandleInput, DEBOUNCE_DELAY));
     
 function handleInput (value) {
-            setTimeout(() => {
                 fetchCountries(value)
                     .then(countries => {
                 if (countries.length > 10) {
@@ -34,16 +33,11 @@ function handleInput (value) {
                     displayCountryInfo(countries)
                     }
                     }
-                ).then(error => {
-                    if (!Response.ok) {
-                      throw new error (Notiflix.Notify.failure(`Oops, there is no country with that name`));
-                    }
-                })
-                    .catch(error => {
-                      console.log(error); 
-                    }) 
-        }, DEBOUNCE_DELAY);
-}
+                ) .catch(error => {
+                      Notiflix.Notify.failure(`Oops, there is no country with that name`); 
+                    });
+       
+};
 
 function displayCountryInfo(countries) {
         const markup = countries
